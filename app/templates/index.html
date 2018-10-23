@@ -1,0 +1,87 @@
+{% extends "base.html" %} {% block app_content %}
+<div id="game">
+    <div class="row">
+        <img id="box0" src="/static/empty.png">
+        <img id="box1" src="/static/empty.png">
+        <img id="box2" src="/static/empty.png">
+    </div>
+    <div class="row">
+        <img id="box3" src="/static/empty.png">
+        <img id="box4" src="/static/empty.png">
+        <img id="box5" src="/static/empty.png">
+    </div>
+    <div class="row">
+        <img id="box6" src="/static/empty.png">
+        <img id="box7" src="/static/empty.png">
+        <img id="box8" src="/static/empty.png">
+    </div>
+</div>
+<button type="button" id="reset" class="btn btn-primary">Reset</button>
+<button type="button" id="chance" class="btn btn-primary">Get Chances</button>
+<div id="chance-display"></div>
+<div id="status"></div>
+<script>
+    var x = "/static/X.png"
+    var o = "/static/O.png"
+    var e = "/static/empty.png"
+    var player = 1
+
+    function whotoplay() {
+        if (player == 1) {
+            return 'Player to Play <br> <img src="/static/X.png">'
+        } else {
+            return 'Player to Play <br> <img src="/static/O.png">'
+        }
+    }
+
+    function change() {
+        el = $(this)
+        if (el.attr("src") == e) {
+            var data = {
+                'player': player,
+                'move': el.attr('id')
+            }
+            if (player == 1) {
+                el.attr("src", x)
+                player = -1
+            } else {
+                el.attr("src", o)
+                player = 1
+            }
+            $.ajax({
+                type: 'POST',
+                url: "/play",
+                data: JSON.stringify(data),
+                success: function(result) {
+                    if (result.wp == 1) {
+                        $("#status").html('Player X Wins')
+                            // $("#reset").click()
+                    } else if (result.wp == -1) {
+                        $("#status").html('Player O Wins')
+                            // $("#reset").click()
+                    } else if (result.wp == 0) {
+                        $("#status").html(whotoplay())
+                    } else {
+                        $("#status").html('Draw')
+                            // $("#reset").click()
+                    }
+                }
+            })
+        }
+    }
+    $("img").click(change)
+    $("#reset").click(function() {
+        player = 1
+        $("img").each(function() {
+            $(this).attr("src", e)
+        });
+        $.get("/");
+    })
+    $("#chance").click(function() {
+        $.get("/score", function(result) {
+            var stats = result.stats
+            $("#chance-display").html('Player X chances: ' + stats[0] + '%<br>Player O chances:  ' + stats[1] + '%<br>Draw: ' + stats[2] + '%')
+        });
+    })
+</script>
+{% endblock %}

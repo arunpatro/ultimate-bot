@@ -3,6 +3,17 @@ import numpy as np
 import time
 import random
 
+MOVES = {
+    0: (0, 0),
+    1: (0, 1),
+    2: (0, 2),
+    3: (1, 0),
+    4: (1, 1),
+    5: (1, 2),
+    6: (2, 0),
+    7: (2, 1),
+    8: (2, 2),
+}
 class TicTacToe:
     def __init__(self, board = np.zeros((3,3)), player = 1):
         self.board = board
@@ -68,9 +79,9 @@ def win(tictactoe):
         return False
 
 def who_win(ttt):
-    nX, nO = count(ttt.board)
-    if nX - nO > 1 or nX - nO < 0:
-        raise ValueError('Impossible Game State')
+    # nX, nO = count(ttt.board)
+    # if nX - nO > 1 or nX - nO < 0:
+    #     raise ValueError('Impossible Game State')
 
     row_sums = np.sum(ttt.board, 1)
     col_sums = np.sum(ttt.board, 0)
