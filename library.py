@@ -67,6 +67,25 @@ def win(tictactoe):
     else:
         return False
 
+def who_win(ttt):
+    nX, nO = count(ttt.board)
+    if nX - nO > 1 or nX - nO < 0:
+        raise ValueError('Impossible Game State')
+
+    row_sums = np.sum(ttt.board, 1)
+    col_sums = np.sum(ttt.board, 0)
+    dia_sums = np.array([np.trace(ttt.board), np.fliplr(ttt.board).trace()])
+
+    sums = np.hstack([row_sums, col_sums, dia_sums])
+    if 3 in sums:
+        return 1
+    elif -3 in sums:
+        return -1
+    elif np.sum(np.isin(ttt.board, 0)) == 0:
+        return None
+    else:
+        return 0 #no-win condition
+
 def draw(ttt):
     if np.sum(np.isin(ttt.board, 0)) == 0 and not win(ttt.board):
         return True
@@ -82,17 +101,10 @@ def playRandom(ttt):
     ttt.play((i,j))
 
 def getNumGames(ttt):
-    if(np.sum(np.isin(ttt.board, 0)) == 0) or win(ttt.board):
+    if(np.sum(np.isin(ttt.board, 0)) == 0) or who_win(ttt):
         return 1
     else:
         count = 0
-        # for i in range(3):
-        #     for j in range(3):
-        #         if ttt.board[i][j] == 0:
-        #             new_ttt = copy.deepcopy(ttt)
-        #             new_ttt.play((i, j))
-        #             val = getNumGames(new_ttt)
-        #             count += val
         ij = np.where(ttt.board == 0)
         for i, j in zip(ij[0], ij[1]):
             new_ttt = copy.deepcopy(ttt)
@@ -100,9 +112,24 @@ def getNumGames(ttt):
             count += getNumGames(new_ttt)
         return count
 
-def getWinningProb(ttt):
-    return out
-
+# get winning probs before playing
+def getWinningStats(ttt):
+    wp = who_win(ttt)
+    if wp == 1: 
+        return np.array([1, 0, 0])
+    elif wp == -1:
+        return np.array([0, 1, 0])
+    elif wp == None:
+        return np.array([0, 0, 1])
+    else:
+        count = np.array([0, 0, 0])
+        ij = np.where(ttt.board == 0)
+        for i, j in zip(ij[0], ij[1]):
+            new_ttt = copy.deepcopy(ttt)
+            new_ttt.play((i, j))
+            count += getWinningStats(new_ttt)
+        return count
+    
 def count(tictactoe):
     nX = np.sum(np.isin(tictactoe, 1))
     nO = np.sum(np.isin(tictactoe, -1))
@@ -119,20 +146,21 @@ def main():
     # t.play((2,0))
     # t.play((0,2))
 
+    print t.board
     print getNumGames(t)
 
 def game():
     ttt = TicTacToe()
-    ttt.play((0,0))
+    # ttt.play((0,0))
     while True:
-        print 'Player: {} num_games: {}'.format(ttt.player, getNumGames(ttt))
+        # print 'Player: {} num_games: {}'.format(ttt.player, getNumGames(ttt))
+        print 'Player: {} num_games (player +1 wins, player -1 wins, draw): {}'.format(ttt.player, getWinningStats(ttt))
         ttt.playRandom()
         print ttt.board
         if win(ttt.board):
             print 'Player {} won'.format(-1 * ttt.player)
             break
 
- 
 if __name__ == "__main__":
-    
+    main()
     game()
