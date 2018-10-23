@@ -38,16 +38,39 @@ class TicTacToe:
 class MasterTicTacToe:
     def __init__(self, board = np.zeros((3,3)), player = 1):
         self.board = board
-        self.sub_boards = [[TicTacToe() for _ in range(3)] for _ in range(3)]
-        self.active_sub_board = (1, 1)
+        self.sub_boards = np.zeros([9, 3, 3])
+        self.active_sub_board = 4
         self.player = 1
     def play(self, position):
         if self.sub_boards[self.active_sub_board][position] == 0:
             self.sub_boards[self.active_sub_board][position] = self.player
+            
+            wp = who_win(TicTacToe(board = self.sub_boards[self.active_sub_board]))
+            pos = self.active_sub_board / 3, self.active_sub_board % 3
+            if wp == 1:
+                self.board[pos] = 1
+            elif wp == -1:
+                self.board[pos] = -1
+                
             self.player = -1 * self.player
-            self.active_sub_board = position
+            self.active_sub_board = position[0] * 3 + position[1]
         else:
-            raise ValueError('Already played there')
+            # raise ValueError('Already played there')
+            pass
+    def playRandom(self):
+        position = self.active_sub_board / 3, self.active_sub_board % 3
+        if not self.board[position] == 0:
+            IJ = np.where(self.board == 0)
+            IJ = zip(IJ[0], IJ[1])
+            II, JJ = random.choice(IJ)
+            self.active_sub_board = II * 3 + JJ
+        ij = np.where(self.sub_boards[self.active_sub_board] == 0)
+        ij = zip(ij[0], ij[1])
+        i, j = random.choice(ij)
+        self.play((i,j))
+    def render(self):
+        b = np.vstack([np.hstack([t for t in self.sub_boards[:3]]), np.hstack([t for t in self.sub_boards[3:6]]), np.hstack([t for t in self.sub_boards[6:]])])
+        print b
     def reset(self):
         self.board = np.zeros((3,3))
     pass
@@ -100,10 +123,6 @@ def who_win(ttt):
 def draw(ttt):
     if np.sum(np.isin(ttt.board, 0)) == 0 and not win(ttt.board):
         return True
-   
-def win_master(mttt):
-    if win(mttt.board):
-        return True
 
 def playRandom(ttt):
     ij = np.where(ttt.board == 0)
@@ -152,10 +171,6 @@ def main():
 
     t.play((0,0))
     t.play((1,1))
-    # t.play((0,1))
-    # t.play((1,2))
-    # t.play((2,0))
-    # t.play((0,2))
 
     print t.board
     print getNumGames(t)
@@ -172,6 +187,19 @@ def game():
             print 'Player {} won'.format(-1 * ttt.player)
             break
 
+def mgame():
+    mttt = MasterTicTacToe()
+    while True:
+        print 'Player: {}'.format(mttt.player)
+        mttt.playRandom()
+        mttt.render()
+        print mttt.board
+        wp = who_win(mttt):
+        if wp:
+            print 'player', wp, 'wins'
+            break
+
 if __name__ == "__main__":
     main()
-    game()
+    # game()
+    mgame()
