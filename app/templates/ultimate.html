@@ -195,7 +195,6 @@
                     el.attr("src", o)
                     player = 1
                 }
-
                 $.ajax({
                     type: 'POST',
                     url: "/mplay",
@@ -203,15 +202,12 @@
                     success: function(result) {
                         if (result.wp == 1) {
                             $("#status").html('Player X Wins')
-                                // $("#reset").click()
                         } else if (result.wp == -1) {
                             $("#status").html('Player O Wins')
-                                // $("#reset").click()
                         } else if (result.wp == 0) {
                             $("#status").html(whotoplay())
                         } else {
                             $("#status").html('Draw')
-                                // $("#reset").click()
                         }
                         if (result.winblock == 1) {
                             doneBlocks.push(result.game)
@@ -229,10 +225,29 @@
                                 gameID = 'game' + data.move.slice(-1)
                             }
                         }
+                        if (gameID != '') {
+                            $('.col-4').each(function(index, value) {
+                                $(this).css({
+                                    "border": "none"
+                                })
+                            })
+                            $('#' + gameID).css({
+                                "border-color": "red",
+                                "border-width": "8px",
+                                "border-style": "solid"
+                            });
+                        } else {
+                            $('.col-4').each(function(index, value) {
+                                $(this).css({
+                                    "border": "none"
+                                })
+                            })
+                        }
                     }
                 })
             }
         }
+
     }
     $("img").click(change)
     $("#reset").click(function() {
