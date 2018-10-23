@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block app_content %}
+<div class="row">
+    <img id="box0" src="/static/empty.png">
+    <img id="box1" src="/static/empty.png">
+    <img id="box2" src="/static/empty.png">
+</div>
+<div class="row">
+    <img id="box3" src="/static/empty.png">
+    <img id="box4" src="/static/empty.png">
+    <img id="box5" src="/static/empty.png">
+</div>
+<div class="row">
+    <img id="box6" src="/static/empty.png">
+    <img id="box7" src="/static/empty.png">
+    <img id="box8" src="/static/empty.png">
+</div>
+<script>
+    var x = "/static/X.png"
+    var o = "/static/O.png"
+    var e = "/static/empty.png"
+    var player = 1
+
+    function change() {
+        el = $(this)
+        if (el.attr("src") == e) {
+            if (player == 1) {
+                el.attr("src", x)
+                player = -1
+            } else {
+                el.attr("src", o)
+                player = 1
+            }
+        }
+    }
+    $("img").click(change)
+</script>
+{% endblock %}
