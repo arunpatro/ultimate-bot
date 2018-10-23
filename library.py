@@ -50,11 +50,16 @@ class MasterTicTacToe:
             pos = self.active_sub_board / 3, self.active_sub_board % 3
             if wp == 1:
                 self.board[pos] = 1
+                self.player = -1 * self.player
+                return True, self.active_sub_board, 1
             elif wp == -1:
                 self.board[pos] = -1
+                self.player = -1 * self.player
+                return True, self.active_sub_board, -1
                 
             self.player = -1 * self.player
             self.active_sub_board = position[0] * 3 + position[1]
+            return False, self.active_sub_board, -1 * self.player
         else:
             # raise ValueError('Already played there')
             pass
@@ -130,6 +135,23 @@ def getWinningStats(ttt):
             new_ttt.play((i, j))
             count += getWinningStats(new_ttt)
         return count
+
+def getMasterWinningStats(mttt):
+    wp = who_win(mttt)
+    if wp == 1: 
+        return np.array([1, 0, 0])
+    elif wp == -1:
+        return np.array([0, 1, 0])
+    elif wp == None:
+        return np.array([0, 0, 1])
+    else:
+        count = np.array([0, 0, 0])
+        ij = np.where(mttt.board == 0)
+        for i, j in zip(ij[0], ij[1]):
+            new_ttt = copy.deepcopy(ttt)
+            new_ttt.play((i, j))
+            count += getWinningStats(new_ttt)
+        return count
     
 def count(tictactoe):
     nX = np.sum(np.isin(tictactoe, 1))
@@ -160,15 +182,17 @@ def game():
 
 def mgame():
     mttt = MasterTicTacToe()
-    while True:
+    steps = 0
+    while steps < 40:
         print 'Player: {}'.format(mttt.player)
         mttt.playRandom()
         mttt.render()
         print mttt.board
-        wp = who_win(mttt):
+        wp = who_win(mttt)
         if wp:
             print 'player', wp, 'wins'
             break
+        steps += 1
 
 if __name__ == "__main__":
     main()
