@@ -14,6 +14,7 @@ MOVES = {
     7: (2, 1),
     8: (2, 2),
 }
+
 class TicTacToe:
     def __init__(self, board = np.zeros((3,3)), player = 1):
         self.board = board
@@ -73,33 +74,9 @@ class MasterTicTacToe:
         print b
     def reset(self):
         self.board = np.zeros((3,3))
+        self.sub_boards = np.zeros([9, 3, 3])
+        self.player = 1
     pass
-
-def win(tictactoe):
-    nX, nO = count(tictactoe)
-    if nX - nO > 1 or nX - nO < 0:
-        raise ValueError('Impossible Game State')
-    if np.abs(np.sum(tictactoe[0])) == 3:
-        return True
-    elif np.abs(np.sum(tictactoe[1])) == 3:
-        return True
-    elif np.abs(np.sum(tictactoe[2])) == 3:
-        return True
-
-    elif np.abs(np.sum(tictactoe[:,0])) == 3:
-        return True
-    elif np.abs(np.sum(tictactoe[:,1])) == 3:
-        return True
-    elif np.abs(np.sum(tictactoe[:,2])) == 3:
-        return True
-
-    elif np.abs(tictactoe[0,0] + tictactoe[1,1] + tictactoe[2,2]) == 3:
-        return True
-    
-    elif np.abs(tictactoe[0,2] + tictactoe[1,1] + tictactoe[2,0]) == 3:
-        return True
-    else:
-        return False
 
 def who_win(ttt):
     # nX, nO = count(ttt.board)
@@ -123,12 +100,6 @@ def who_win(ttt):
 def draw(ttt):
     if np.sum(np.isin(ttt.board, 0)) == 0 and not win(ttt.board):
         return True
-
-def playRandom(ttt):
-    ij = np.where(ttt.board == 0)
-    ij = zip(ij[0], ij[1])
-    i, j = random.choice(ij)
-    ttt.play((i,j))
 
 def getNumGames(ttt):
     if(np.sum(np.isin(ttt.board, 0)) == 0) or who_win(ttt):
