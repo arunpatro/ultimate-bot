@@ -79,9 +79,9 @@ def win(tictactoe):
         return False
 
 def who_win(ttt):
-    nX, nO = count(ttt.board)
-    if nX - nO > 1 or nX - nO < 0:
-        raise ValueError('Impossible Game State')
+    # nX, nO = count(ttt.board)
+    # if nX - nO > 1 or nX - nO < 0:
+    #     raise ValueError('Impossible Game State')
 
     row_sums = np.sum(ttt.board, 1)
     col_sums = np.sum(ttt.board, 0)

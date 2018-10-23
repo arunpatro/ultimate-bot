@@ -17,6 +17,8 @@
     </div>
 </div>
 <button type="button" id="reset" class="btn btn-primary">Reset</button>
+<button type="button" id="chance" class="btn btn-primary">Get Chances</button>
+<div id="chance-display"></div>
 <div id="status"></div>
 <script>
     var x = "/static/X.png"
@@ -74,6 +76,12 @@
             $(this).attr("src", e)
         });
         $.get("/");
+    })
+    $("#chance").click(function() {
+        $.get("/score", function(result) {
+            var stats = result.stats
+            $("#chance-display").html('Player X chances: ' + stats[0] + '%<br>Player O chances:  ' + stats[1] + '%<br>Draw: ' + stats[2] + '%')
+        });
     })
 </script>
 {% endblock %}

@@ -4,6 +4,7 @@ from flask import request, jsonify, json
 from glob import glob
 import random
 import library as lib
+import numpy as np
 
 app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a'
 
@@ -34,5 +35,14 @@ def play():
     wp = lib.who_win(ttt)
     out = {
         'wp': wp
+    }
+    return jsonify(out)
+
+@app.route('/score', methods=['GET', 'POST'])
+def score():
+    stats = lib.getWinningStats(ttt)
+    stats = stats * 100 / np.sum(stats)
+    out = {
+        'stats': list(stats)
     }
     return jsonify(out)
